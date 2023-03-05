@@ -1,16 +1,16 @@
 {
-  "id": "dev.replugged.PluginTemplate",
-  "name": "Plugin Template",
-  "description": "A plugin template",
+  "id": "dev.rammyramramram.RepluggedReplace",
+  "name": "RepluggedReplace",
+  "description": "Replaces text in messages",
   "author": {
-    "name": "replugged",
-    "discordID": "1000992611840049192",
-    "github": "replugged-org"
+    "name": "Ram Ram goes woomy!",
+    "discordID": "642108520858386452",
+    "github": "DenowRammy"
   },
   "version": "1.0.0",
   "updater": {
     "type": "github",
-    "id": "replugged-org/plugin-template"
+    "id": "denowrammy/RepluggedReplace"
   },
   "license": "MIT",
   "type": "replugged-plugin",

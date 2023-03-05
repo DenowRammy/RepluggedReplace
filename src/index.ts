@@ -1,24 +1,38 @@
-import { Injector, Logger, webpack } from "replugged";
+import { Injector, common } from "replugged";
 
 const inject = new Injector();
-const logger = Logger.plugin("PluginTemplate");
+
+const regexesOut = [
+  {
+    regex: new RegExp(/\/((www|m).)?twitter.com/, "gi"),
+    replace: "/fxtwitter.com",
+  },
+  {
+    regex: new RegExp(/\/((www|m).)?reddit.com/, "gi"),
+    replace: "/libreddit.spike.codes",
+  },
+  {
+    regex: new RegExp(/\/yewtu.be/, "gi"),
+    replace: "/youtube.com",
+  },
+];
 
 export async function start(): Promise<void> {
-  const typingMod = await webpack.waitForModule<{
-    startTyping: (channelId: string) => void;
-  }>(webpack.filters.byProps("startTyping"));
-  const getChannelMod = await webpack.waitForModule<{
-    getChannel: (id: string) => {
-      name: string;
-    };
-  }>(webpack.filters.byProps("getChannel"));
-
-  if (typingMod && getChannelMod) {
-    inject.instead(typingMod, "startTyping", ([channel]) => {
-      const channelObj = getChannelMod.getChannel(channel);
-      logger.log(`Typing prevented! Channel: #${channelObj?.name ?? "unknown"} (${channel}).`);
-    });
-  }
+  inject.after(common.messages, "sendMessage", (args) => {
+    let { content } = args[1];
+    let altered = false;
+    //check if content matches any of the regexes_out
+    for (let i = 0; i < regexesOut.length; i++) {
+      if (content.search(regexesOut[i].regex) !== -1) {
+        content = content.replace(regexesOut[i].regex, () => {
+          return regexesOut[i].replace;
+        });
+        altered = true;
+      }
+    }
+    if (altered) args[1].content = content;
+    return args;
+  });
 }
 
 export function stop(): void {
